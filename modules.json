@@ -6,11 +6,11 @@
             "custom/dumpsoftwareversions": {
                 "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
             },
-            "fastqc": {
-                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+            "happy/happy": {
+                "git_sha": "233fa70811a03a4cecb2ece483b5c8396e2cee1d"
             },
-            "multiqc": {
-                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+            "happy/prepy": {
+                "git_sha": "233fa70811a03a4cecb2ece483b5c8396e2cee1d"
             }
         }
     }
