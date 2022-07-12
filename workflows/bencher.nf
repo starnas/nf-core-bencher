@@ -51,15 +51,15 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 workflow BENCHER {
 
     ch_versions = Channel.empty()
-    print(ch_input)
+    //print(ch_input)
 
     //
-    // SUBWORKFLOW: Read in yml input and preprare the channels
+    // SUBWORKFLOW: Read in json input and preprare the channels
     //
     INPUT_PREP (
       ch_input
     )
-    ch_versions = ch_versions.mix(INPUT_PREP.out.versions)
+    //ch_versions = ch_versions.mix(INPUT_PREP.out.versions)
 
     //
     // MODULE: Prepare happy
