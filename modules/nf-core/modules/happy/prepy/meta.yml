@@ -30,7 +30,7 @@ input:
   - fasta:
       type: file
       description: FASTA file of the reference genome
-      pattern: "*.{fa,fasta}"
+      pattern: "*.{fa,fna,fasta}"
   - fasta_fai:
       type: file
       description: The index of the reference FASTA

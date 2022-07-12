@@ -64,7 +64,9 @@ workflow BENCHER {
     //
     // MODULE: Prepare happy
     //
-
+    HAPPY_PREPY (
+      INPUT_PREP.out
+    )
 
     //
     // MODULE: Run happy

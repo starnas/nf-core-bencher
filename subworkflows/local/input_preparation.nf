@@ -12,6 +12,11 @@ workflow INPUT_PREP {
   main:
   
   //----------------------------------------------------------------------
+  // prepare reference genome channeæ
+
+  ch_refgen_fasta = Channel.from([[params.fasta, params.fasta_fai]])
+  
+  //----------------------------------------------------------------------
   // read the input json 
 
   // slurp input json using groovy standard library
@@ -60,9 +65,16 @@ workflow INPUT_PREP {
   }
 
   // generate the channel
-  ch_strata_beds = Channel.fromPath(l_strata_beds)
-  ch_strata_beds.view()
+  ch_strata_beds = Channel.from(l_strata_beds)
+  //ch_strata_beds.view()
 
+  //----------------------------------------------------------------------
+  // custom strata channel preparations
+
+  // generate the channel
+  ch_custom_beds = Channel.from(inputs.custom_strata)
+  ch_custom_beds.view()
+  
   //----------------------------------------------------------------------
   // prepare the input files channel
 
@@ -101,11 +113,9 @@ workflow INPUT_PREP {
   //----------------------------------------------------------------------
   // final mixing of channels
 
-
-  // prepare channel for hc vcfs
-  //ch_inputs_hc = ch_vcfs.combine(ch_refgen_hc, by: 0)
-  //ch_inputs_hc.view()
-
+  // prepare channel for hc = high confidence
+  ch_high_confidence = ch_input_files.combine(ch_refgen_hc, by: 0)
+  //ch_high_confidence.view()
 
   // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
   //ch_refgen_strata = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
@@ -116,9 +126,22 @@ workflow INPUT_PREP {
   //ch_inputs_strata = ch_vcfs.combine(ch_refgen_strata, by: 0)
   //ch_inputs_strata.view()
 
+  // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
+  //ch_refgen_custom = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
+  //ch_refgen_custom = ch_refgen_custom.combine(ch_custom_beds)
+  //ch_refgen_custom = ch_refgen_custom.map{a,b,c -> tuple(a, b, c, base_name(c)).flatten()}
+
+  // prepare channel for strata vcfs
+  //ch_inputs_custom = ch_vcfs.combine(ch_refgen_custom, by: 0)
+  //ch_inputs_custom.view()
+
+  // combined channel with all runs
+  ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
+  //ch_preppy_runs.view()
 
   emit:
-  ch_input_files                                     // channel: [ val(meta), [ reads ] ]
+  ch_preppy_runs                                     
+  ch_refgen_fasta
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]
 }
 
