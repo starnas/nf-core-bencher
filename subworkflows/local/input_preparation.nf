@@ -140,8 +140,10 @@ workflow INPUT_PREP {
   //ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
   //ch_preppy_runs.view()
 
+  ch_formatted_inputs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam).flatten()}
+
   emit:
-  ch_high_confidence                                     
+  ch_formatted_inputs                
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]
 }
 
