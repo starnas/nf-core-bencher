@@ -11,21 +11,18 @@ workflow INPUT_PREP {
 
   main:
   
-  //----------------------------------------------------------------------
-  // prepare reference genome channeæ
-
-  ch_refgen_fasta = Channel.from([[params.fasta, params.fasta_fai]])
-  
-  //----------------------------------------------------------------------
-  // read the input json 
+  //
+  // CODE: Read json using groovy
+  //
 
   // slurp input json using groovy standard library
   def jSlurp = new JsonSlurper()
   def inputFile = new File(inputsheet.toString())
   def inputs = jSlurp.parseText(inputFile.text)
 
-  //----------------------------------------------------------------------
-  // high confidence channel preparations
+  //
+  // CODE: Prepare high confidence reference channel
+  //
 
   // channel with reference locations based on NIST ftp download
   ch_refgen_loc = Channel.from(
@@ -44,8 +41,9 @@ workflow INPUT_PREP {
   ch_refgen_hc = ch_refgen_hc.combine(Channel.from("${params.genome_version}_high_confidence"))
   //ch_refgen_hc.view()
 
-  //----------------------------------------------------------------------
-  // all strata channel preparations
+  //
+  // CODE: Prepare all strata channel
+  //
 
   // all strata list based on folders from nist website
   def l_strata_beds = []
@@ -68,15 +66,17 @@ workflow INPUT_PREP {
   ch_strata_beds = Channel.from(l_strata_beds)
   //ch_strata_beds.view()
 
-  //----------------------------------------------------------------------
-  // custom strata channel preparations
+  //
+  // CODE: Prepare custom stratifications channel
+  //
 
   // generate the channel
   ch_custom_beds = Channel.from(inputs.custom_strata)
   ch_custom_beds.view()
   
-  //----------------------------------------------------------------------
-  // prepare the input files channel
+  //
+  // CODE: Prepare input files channel
+  //
 
   // placeholder for inputs as list
   l_input_files = []
@@ -110,8 +110,9 @@ workflow INPUT_PREP {
   ch_input_files = Channel.from(l_input_files)
   //ch_input_files.view()
 
-  //----------------------------------------------------------------------
-  // final mixing of channels
+  //
+  // CODE: Final mixing of the channels
+  //
 
   // prepare channel for hc = high confidence
   ch_high_confidence = ch_input_files.combine(ch_refgen_hc, by: 0)
@@ -136,12 +137,11 @@ workflow INPUT_PREP {
   //ch_inputs_custom.view()
 
   // combined channel with all runs
-  ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
+  //ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
   //ch_preppy_runs.view()
 
   emit:
-  ch_preppy_runs                                     
-  ch_refgen_fasta
+  ch_high_confidence                                     
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]
 }
 

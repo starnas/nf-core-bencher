@@ -1,0 +1,2 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	2a/bfc300	3787781	NFCORE_BENCHER:BENCHER:HAPPY_WRAP:HAPPY_PREPY (210712_NA12878-NS3exom-1)	ABORTED	-	2022-07-13 10:51:13.013	-	-	-	-	-	-	-

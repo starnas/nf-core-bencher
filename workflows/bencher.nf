@@ -28,6 +28,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Inputsheet n
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_PREP                 } from '../subworkflows/local/input_preparation'
+include { HAPPY_WRAP                 } from '../subworkflows/local/happy_wrapper'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,8 +39,6 @@ include { INPUT_PREP                 } from '../subworkflows/local/input_prepara
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { HAPPY_HAPPY                 } from '../modules/nf-core/modules/happy/happy/main'
-include { HAPPY_PREPY                 } from '../modules/nf-core/modules/happy/prepy/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
 
 /*
@@ -50,7 +49,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 
 workflow BENCHER {
 
-    ch_versions = Channel.empty()
+    //ch_versions = Channel.empty()
     //print(ch_input)
 
     //
@@ -62,16 +61,21 @@ workflow BENCHER {
     //ch_versions = ch_versions.mix(INPUT_PREP.out.versions)
 
     //
-    // MODULE: Prepare happy
+    // SUBWORKFLOW: run happy tools
     //
-    HAPPY_PREPY (
-      INPUT_PREP.out
+    HAPPY_WRAP (
+     INPUT_PREP.out
     )
 
+    // TODO
     //
-    // MODULE: Run happy
+    // SUBWORKFLOW: run bam stats
     //
 
+    // TODO
+    //
+    // SUBWORKFLOW: prepare run report
+    //
 }
 
 /*
