@@ -1,2 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
-1	a6/eca766	3768247	NFCORE_BENCHER:BENCHER:HAPPY_PREPY (null)	COMPLETED	0	2022-07-12 14:17:56.442	3m 36s	3m 15s	315.7%	9.1 GB	23.3 GB	9.8 GB	1.3 GB
