@@ -11,6 +11,18 @@
             },
             "happy/prepy": {
                 "git_sha": "233fa70811a03a4cecb2ece483b5c8396e2cee1d"
+            },
+            "mosdepth": {
+                "git_sha": "72a31b76eb1b58879e0d91fb1d992e0118693098"
+            },
+            "picard/collectmultiplemetrics": {
+                "git_sha": "682f789f93070bd047868300dd018faf3d434e7c"
+            },
+            "qualimap/bamqc": {
+                "git_sha": "49b18b1639f4f7104187058866a8fab33332bdfe"
+            },
+            "samtools/index": {
+                "git_sha": "897c33d5da084b61109500ee44c01da2d3e4e773"
             }
         }
     }

@@ -29,6 +29,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Inputsheet n
 //
 include { INPUT_PREP                 } from '../subworkflows/local/input_preparation'
 include { HAPPY_WRAP                 } from '../subworkflows/local/happy_wrapper'
+include { BAM_METRICS                } from '../subworkflows/local/bam_stats'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,10 +68,12 @@ workflow BENCHER {
      INPUT_PREP.out
     )
 
-    // TODO
     //
     // SUBWORKFLOW: run bam stats
     //
+    BAM_METRICS (
+      INPUT_PREP.out
+    )
 
     // TODO
     //
