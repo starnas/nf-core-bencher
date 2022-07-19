@@ -18,9 +18,6 @@
             "picard/collectmultiplemetrics": {
                 "git_sha": "682f789f93070bd047868300dd018faf3d434e7c"
             },
-            "qualimap/bamqc": {
-                "git_sha": "49b18b1639f4f7104187058866a8fab33332bdfe"
-            },
             "samtools/index": {
                 "git_sha": "897c33d5da084b61109500ee44c01da2d3e4e773"
             }

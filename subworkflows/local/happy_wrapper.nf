@@ -20,7 +20,7 @@ workflow HAPPY_WRAP {
   //
   ch_refgen_fasta = Channel.value([params.fasta, params.fasta_fai])
   //ch_refgen_fasta.view()
-  ch_preppy_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(meta, ref_vcf, bed_file).flatten()}                
+  ch_preppy_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(meta, sample_vcf, bed_file).flatten()}                
   //ch_preppy_runs.view()
 
   //

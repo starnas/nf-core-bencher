@@ -4,9 +4,8 @@
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { SAMTOOLS_INDEX } from '../../modules/nf-core/modules/samtools/index/main'
 include { MOSDEPTH } from '../../modules/nf-core/modules/mosdepth/main'
-include { QUALIMAP_BAMQC } from '../../modules/nf-core/modules/qualimap/bamqc/main'
+include { SAMTOOLS_INDEX } from '../../modules/nf-core/modules/samtools/index/main'
 include { PICARD_COLLECTMULTIPLEMETRICS } from '../../modules/nf-core/modules/picard/collectmultiplemetrics/main'
 
 workflow BAM_METRICS {
@@ -30,28 +29,28 @@ workflow BAM_METRICS {
     params.fasta, 
     params.fasta_fai
   )
-
+  
   //
-  // MODULE: samtools index
+  // MODULE: index from samtools
   //
   SAMTOOLS_INDEX (
     ch_multimetrics_runs
   )
 
-  tmp_list = SAMTOOLS_INDEX.out.bai
-
   //
   // CODE: Prepare mosdepth input channel
-  //
-  ch_mosdepth_runs = inputs_channel.combine(SAMTOOLS_INDEX.out.bai, by: 0)
-  ch_mosdepth_runs = ch_mosdepth_runs.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam, sample_bai -> tuple(meta, sample_bam).flatten()}         
+  //  
+  ch_mosdepth_bams = inputs_channel.combine(SAMTOOLS_INDEX.out.bai, by: 0)
+  ch_mosdepth_bams = ch_mosdepth_bams.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam, sample_bai -> tuple(meta, sample_bam, sample_bai).flatten()}         
   ch_mosdepth_beds = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(bed_file).flatten()}   
+
   //
   // MODULE: mosdepth
   //
-  QUALIMAP_BAMQC (
-    ch_mosdepth_runs,
-    ch_mosdepth_beds
+  MOSDEPTH (
+    ch_mosdepth_bams,
+    ch_mosdepth_beds,
+    params.fasta
   )
 
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]

@@ -12,12 +12,24 @@
       "210712_NA12878-NS3exom-1": [
         "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/exome_v5/210712_NA12878-NS3exom-1/NA12878-NS3exom-1.final.variants.vcf.gz",
         "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/exome_v5/210712_NA12878-NS3exom-1/NA12878-NS3exom-1.aligned.sorted.markdup.bam"
+      ],
+      "201007_00gb12878-NA12878_1-Blood-WGS_v2-HV5J5DMXX": [
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/genome/201007_00gb12878-NA12878_1-Blood-WGS_v2-HV5J5DMXX/00gb12878-NA12878_1-Blood-WGS_v2-HV5J5DMXX.final.variants.vcf.gz",
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/genome/201007_00gb12878-NA12878_1-Blood-WGS_v2-HV5J5DMXX/00gb12878-NA12878_1-Blood-WGS_v2-HV5J5DMXX.aligned.sorted.markdup.bam"
+      ],
+      "NA12878_REP1-1_Superpanel_v3_validering": [
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/superpanel_v3/NA12878_REP1-1_Superpanel_v3_validering/NA12878_REP1-1_Superpanel_v3_validering.exomedepth.vcf.gz",
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/superpanel_v3/NA12878_REP1-1_Superpanel_v3_validering/NA12878_REP1-1_Superpanel_v3_validering.aligned.sorted.markdup.bam"
       ]
     },
     "NA24385": {
       "210712_NA24385-NS3exom-1": [
         "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/exome_v5/210712_NA24385-NS3exom-1/NA24385-NS3exom-1.final.variants.vcf.gz",
         "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/exome_v5/210712_NA24385-NS3exom-1/NA24385-NS3exom-1.aligned.sorted.markdup.bam"
+      ],
+      "201007_00gb24385-NA24385-Blood-WGS_v2-HV5J5DMXX": [
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/genome/201007_00gb24385-NA24385-Blood-WGS_v2-HV5J5DMXX/00gb24385-NA24385-Blood-WGS_v2-HV5J5DMXX.final.variants.vcf.gz",
+        "/faststorage/project/MomaDiagnosticsHg38/NO_BACKUP/users/starnas/genome_in_a_bottle/genome/201007_00gb24385-NA24385-Blood-WGS_v2-HV5J5DMXX/00gb24385-NA24385-Blood-WGS_v2-HV5J5DMXX.aligned.sorted.markdup.bam"
       ]
     }
   }
