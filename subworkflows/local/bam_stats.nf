@@ -6,7 +6,7 @@
 //
 include { MOSDEPTH } from '../../modules/nf-core/modules/mosdepth/main'
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/modules/samtools/index/main'
-include { PICARD_COLLECTMULTIPLEMETRICS } from '../../modules/nf-core/modules/picard/collectmultiplemetrics/main'
+//include { PICARD_COLLECTMULTIPLEMETRICS } from '../../modules/nf-core/modules/picard/collectmultiplemetrics/main'
 
 workflow BAM_METRICS {
   take: 
@@ -24,11 +24,11 @@ workflow BAM_METRICS {
   //
   // MODULE: collectmultiplemetrics
   //
-  PICARD_COLLECTMULTIPLEMETRICS (
-    ch_multimetrics_runs,
-    params.fasta, 
-    params.fasta_fai
-  )
+  // PICARD_COLLECTMULTIPLEMETRICS (
+  //   ch_multimetrics_runs,
+  //   params.fasta, 
+  //   params.fasta_fai
+  // )
   
   //
   // MODULE: index from samtools
