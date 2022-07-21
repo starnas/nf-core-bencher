@@ -79,7 +79,8 @@ workflow INPUT_PREP {
   //
 
   // placeholder for inputs as list
-  l_input_files = []
+  l_input_genomes = []
+  l_input_targetted = []
 
   // populating the inputs list - loop over the nist id
   for (giab_id in inputs.input_files.keySet()){
@@ -92,31 +93,49 @@ workflow INPUT_PREP {
 
         vcf_file = inputs.input_files[giab_id][sample_id][0]
         bam_file = inputs.input_files[giab_id][sample_id][1]
+        bed_file = inputs.input_files[giab_id][sample_id][2]
 
         // check if vcf supplied
         if (vcf_file.endsWith('vcf.gz')){
 
           // check if bam supplied
           if (bam_file.endsWith('bam')){
+            
+            // check if bed supplied - if yes, targetted analysis
+            if (bed_file && bed_file.endsWith('bed')){
+              
+              //  giab_id, sample_id. vcf, bam and target bed to the input list
+              l_input_targetted << [giab_id, sample_id, vcf_file, bam_file, bed_file]
 
-            // append giab_id, sample_id. vcf and bam to the input list
-            l_input_files << [giab_id, sample_id, vcf_file, bam_file]
+            }
 
+            // if not, non-targetted analysis
+            else {
+
+              // append giab_id, sample_id. vcf and bam to the input list
+              l_input_genomes << [giab_id, sample_id, vcf_file, bam_file]
+
+            }
           }
         }
       }
     }
   }
-  ch_input_files = Channel.from(l_input_files)
-  //ch_input_files.view()
+
+  // make into channels
+  ch_input_genomes = Channel.from(l_input_genomes)
+  //ch_input_genomes.view()
+  ch_input_targetted = Channel.from(l_input_targetted)
+  //ch_input_targetted.view()
 
   //
   // CODE: Final mixing of the channels
   //
 
   // prepare channel for hc = high confidence
-  ch_high_confidence = ch_input_files.combine(ch_refgen_hc, by: 0)
-  //ch_high_confidence.view()
+  ch_hc_genomes = ch_input_genomes.combine(ch_refgen_hc, by: 0)
+  ch_hc_targetted = ch_input_targetted.combine(ch_refgen_hc, by: 0)
+  //ch_hc_targetted.view()
 
   // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
   //ch_refgen_strata = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
@@ -140,7 +159,11 @@ workflow INPUT_PREP {
   //ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
   //ch_preppy_runs.view()
 
-  ch_formatted_inputs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam).flatten()}
+  ch_hc_genomes = ch_hc_genomes.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'target_bed': false, 'strata_bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam, 'None').flatten()}
+  //ch_hc_genomes.view()
+  ch_hc_targetted = ch_hc_targetted.map{giab_id, sample_id, sample_vcf, sample_bam, sample_bed, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'target_bed': true, 'strata_bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam, sample_bed).flatten()}
+  ch_formatted_inputs = ch_hc_genomes.concat(ch_hc_targetted) 
+  //ch_formatted_inputs.view()
 
   emit:
   ch_formatted_inputs                

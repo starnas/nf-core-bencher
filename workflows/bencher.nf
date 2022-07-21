@@ -59,21 +59,21 @@ workflow BENCHER {
     INPUT_PREP (
       ch_input
     )
-    //ch_versions = ch_versions.mix(INPUT_PREP.out.versions)
+    //INPUT_PREP.out.view()
 
     //
     // SUBWORKFLOW: run happy tools
     //
-    HAPPY_WRAP (
-     INPUT_PREP.out
-    )
+    // HAPPY_WRAP (
+    //  INPUT_PREP.out
+    // )
 
     //
     // SUBWORKFLOW: run bam stats
     //
-    BAM_METRICS (
-      INPUT_PREP.out
-    )
+    // BAM_METRICS (
+    //   INPUT_PREP.out
+    // )
 
     // TODO
     //
