@@ -1,7 +1,15 @@
 //
-// Check input samplesheet and get read channels
+// Check input samplesheet and get the input channel ready
 //
 
+//
+// MODULE: Installed directly from nf-core/modules
+//
+include { BEDTOOLS_SORT } from '../../modules/nf-core/modules/bedtools/sort/main'
+include { BEDTOOLS_MERGE } from '../../modules/nf-core/modules/bedtools/merge/main'
+include { BEDTOOLS_INTERSECT } from '../../modules/nf-core/modules/bedtools/intersect/main'
+
+// required for handling input json
 import groovy.json.JsonSlurper
 
 workflow INPUT_PREP {
@@ -60,6 +68,8 @@ workflow INPUT_PREP {
       l_strata_beds_filtered.add(l_strata_beds_cp.findAll{it =~/${b}/})
     }
     l_strata_beds = l_strata_beds_filtered.flatten()
+  } else {
+    l_strata_beds = []
   }
 
   // generate the channel
@@ -72,7 +82,10 @@ workflow INPUT_PREP {
 
   // generate the channel
   ch_custom_beds = Channel.from(inputs.custom_strata)
-  ch_custom_beds.view()
+
+  // add it to the strata channel, since treatment is the same
+  ch_strata_beds = ch_strata_beds.concat(ch_custom_beds) 
+  //ch_custom_beds.view()
   
   //
   // CODE: Prepare input files channel
@@ -136,33 +149,63 @@ workflow INPUT_PREP {
   ch_hc_genomes = ch_input_genomes.combine(ch_refgen_hc, by: 0)
   ch_hc_targetted = ch_input_targetted.combine(ch_refgen_hc, by: 0)
   //ch_hc_targetted.view()
-
-  // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
-  //ch_refgen_strata = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
-  //ch_refgen_strata = ch_refgen_strata.combine(ch_strata_beds)
-  //ch_refgen_strata = ch_refgen_strata.map{a,b,c -> tuple(a, b, c, base_name(c)).flatten()}
-
-  // prepare channel for strata vcfs
-  //ch_inputs_strata = ch_vcfs.combine(ch_refgen_strata, by: 0)
-  //ch_inputs_strata.view()
-
-  // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
-  //ch_refgen_custom = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
-  //ch_refgen_custom = ch_refgen_custom.combine(ch_custom_beds)
-  //ch_refgen_custom = ch_refgen_custom.map{a,b,c -> tuple(a, b, c, base_name(c)).flatten()}
-
-  // prepare channel for strata vcfs
-  //ch_inputs_custom = ch_vcfs.combine(ch_refgen_custom, by: 0)
-  //ch_inputs_custom.view()
-
-  // combined channel with all runs
-  //ch_preppy_runs = ch_high_confidence.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id], sample_vcf, bed_file).flatten()}
-  //ch_preppy_runs.view()
-
-  ch_hc_genomes = ch_hc_genomes.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'target_bed': false, 'strata_bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam, 'None').flatten()}
   //ch_hc_genomes.view()
-  ch_hc_targetted = ch_hc_targetted.map{giab_id, sample_id, sample_vcf, sample_bam, sample_bed, ref_vcf, bed_file, bed_id -> tuple(['id': sample_id, 'ref_id': giab_id, 'target_bed': true, 'strata_bed_id': bed_id], ref_vcf, sample_vcf, bed_file, sample_bam, sample_bed).flatten()}
-  ch_formatted_inputs = ch_hc_genomes.concat(ch_hc_targetted) 
+
+  // final strata channel with tuples of nist_id, ref_vcf, strata_bed and strata_name
+  ch_refgen_strata = ch_refgen_loc.map{a,b -> tuple(a, get_file(b, "vcf.gz")).flatten()}
+  ch_refgen_strata = ch_refgen_strata.combine(ch_strata_beds)
+  ch_refgen_strata = ch_refgen_strata.map{a,b,c -> tuple(a, b, c, base_name(c)).flatten()}
+
+  // prepare channel for strata vcfs
+  ch_st_genomes = ch_input_genomes.combine(ch_refgen_strata, by: 0)
+  ch_st_targetted = ch_input_targetted.combine(ch_refgen_strata, by: 0)
+  //ch_st_targetted.view()
+  //ch_st_genomes.view()
+
+  // concat the genome and targetted channles
+  ch_genomes = ch_hc_genomes.concat(ch_st_genomes)
+  ch_targetted = ch_hc_targetted.concat(ch_st_targetted)
+  //ch_targetted.view()
+  //ch_genomes.view()
+
+  // prepare final structure for channels
+  ch_genomes = ch_genomes.map{giab_id, sample_id, sample_vcf, sample_bam, ref_vcf, ref_bed_file, bed_id -> tuple(['id': sample_id+'_'+bed_id, 'sample_id': sample_id, 'ref_id': giab_id, 'target_bed': false, 'strata_bed_id': bed_id, 'target_bed_id': 'None'], ref_vcf, sample_vcf, ref_bed_file, sample_bam, 'None', ref_bed_file).flatten()}
+  ch_targetted = ch_targetted.map{giab_id, sample_id, sample_vcf, sample_bam, sample_bed, ref_vcf, ref_bed_file, bed_id -> tuple(['id': sample_id+'_'+base_name(sample_bed)+'_vs_'+bed_id, 'sample_id': sample_id, 'ref_id': giab_id, 'target_bed': true, 'strata_bed_id': bed_id, 'target_bed_id': base_name(sample_bed)], ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed).flatten()}
+  
+  //
+  // CODE: Intersecting the target bed with reference bed for the targetted channels
+  // MODULE: bedtools_intersect
+  //
+  ch_bedtools = ch_targetted.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed -> tuple(meta, ref_bed_file, sample_bed).flatten()}
+
+  BEDTOOLS_INTERSECT (
+    ch_bedtools,
+    Channel.value('bed')
+  )
+  
+  //
+  // MODULE: bedtools_sort
+  //
+  BEDTOOLS_SORT (
+    BEDTOOLS_INTERSECT.out.intersect,
+    Channel.value('sorted.bed')
+  )
+
+  //
+  // MODULE: bedtools_merge
+  //
+  BEDTOOLS_MERGE (
+    BEDTOOLS_SORT.out.sorted,
+  )
+  
+  ch_targetted = ch_targetted.combine(BEDTOOLS_MERGE.out.bed, by: 0)
+  ch_targetted = ch_targetted.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed -> tuple(meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed).flatten()}
+
+  //
+  // CODE: Joining the targetted and genomes into one output channel
+  //
+
+  ch_formatted_inputs = ch_genomes.concat(ch_targetted) 
   //ch_formatted_inputs.view()
 
   emit:

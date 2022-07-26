@@ -1,12 +1,14 @@
 {
-  "run_filter_strata": true,
-  "run_custom_strata": false,
+  "run_filter_strata": false,
+  "run_custom_strata": true,
   "filter_strata": [
     "GRCh38_AllTandemRepeatsandHomopolymers_slop5",
     "GRCh38_notinAllTandemRepeatsandHomopolymers_slop5",
     "GRCh38_gc85_slop50"
   ],
-  "custom_strata": [],
+  "custom_strata": [
+    "/home/starnas/nf/nf-core-bencher/assets/brca12.hg38.bed"
+  ],
   "input_files": {
     "NA12878": {
       "210712_NA12878-NS3exom-1": [

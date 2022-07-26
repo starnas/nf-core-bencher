@@ -20,7 +20,7 @@ workflow HAPPY_WRAP {
   //
   ch_refgen_fasta = Channel.value([params.fasta, params.fasta_fai])
   //ch_refgen_fasta.view()
-  ch_preppy_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(meta, sample_vcf, bed_file).flatten()}                
+  ch_preppy_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed -> tuple(meta, sample_vcf, final_region_bed).flatten()}                
   //ch_preppy_runs.view()
 
   //
@@ -35,7 +35,7 @@ workflow HAPPY_WRAP {
   // CODE: Prepare happy input channel
   //
   ch_happy_runs = inputs_channel.combine(HAPPY_PREPY.out.preprocessed_vcf, by: 0)
-  ch_happy_runs = ch_happy_runs.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam, sample_preppy_vcf -> tuple(meta, ref_vcf, sample_preppy_vcf, bed_file).flatten()}         
+  ch_happy_runs = ch_happy_runs.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed, sample_preppy_vcf -> tuple(meta, ref_vcf, sample_preppy_vcf, final_region_bed).flatten()}         
   //ch_happy_runs.view()
 
   //
