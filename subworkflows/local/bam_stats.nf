@@ -18,7 +18,7 @@ workflow BAM_METRICS {
   //
   // CODE: Prepare picard input channel
   //
-  ch_multimetrics_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(meta, sample_bam).flatten()}                     
+  ch_multimetrics_runs = inputs_channel.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed -> tuple(meta, sample_bam).flatten()}                     
   //ch_multimetrics_runs.view()
 
   //
@@ -41,8 +41,8 @@ workflow BAM_METRICS {
   // CODE: Prepare mosdepth input channel
   //  
   ch_mosdepth_bams = inputs_channel.combine(SAMTOOLS_INDEX.out.bai, by: 0)
-  ch_mosdepth_bams = ch_mosdepth_bams.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam, sample_bai -> tuple(meta, sample_bam, sample_bai).flatten()}         
-  ch_mosdepth_beds = inputs_channel.map{meta, ref_vcf, sample_vcf, bed_file, sample_bam -> tuple(bed_file).flatten()}   
+  ch_mosdepth_bams = ch_mosdepth_bams.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed, sample_bai -> tuple(meta, sample_bam, sample_bai).flatten()}         
+  ch_mosdepth_beds = inputs_channel.map{meta, ref_vcf, sample_vcf, ref_bed_file, sample_bam, sample_bed, final_region_bed -> tuple(final_region_bed).flatten()}   
 
   //
   // MODULE: mosdepth
@@ -53,5 +53,7 @@ workflow BAM_METRICS {
     params.fasta
   )
 
+  emit:
+  MOSDEPTH.out.summary_txt                
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]
 }

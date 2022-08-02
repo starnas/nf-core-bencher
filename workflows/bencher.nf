@@ -30,6 +30,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Inputsheet n
 include { INPUT_PREP                 } from '../subworkflows/local/input_preparation'
 include { HAPPY_WRAP                 } from '../subworkflows/local/happy_wrapper'
 include { BAM_METRICS                } from '../subworkflows/local/bam_stats'
+include { FINAL_REPORT               } from '../subworkflows/local/final_report'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,7 +65,7 @@ workflow BENCHER {
     // SUBWORKFLOW: run happy tools
     //
     HAPPY_WRAP (
-     INPUT_PREP.out
+      INPUT_PREP.out
     )
 
     //
@@ -78,6 +79,12 @@ workflow BENCHER {
     //
     // SUBWORKFLOW: prepare run report
     //
+    //HAPPY_WRAP.out.view()
+
+    FINAL_REPORT (
+      HAPPY_WRAP.out,
+      BAM_METRICS.out
+    )
 }
 
 /*

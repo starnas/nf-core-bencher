@@ -79,13 +79,14 @@ workflow INPUT_PREP {
   //
   // CODE: Prepare custom stratifications channel
   //
+  if (inputs.run_custom_strata){
+    
+    // generate the channel
+    ch_custom_beds = Channel.from(inputs.custom_strata)
 
-  // generate the channel
-  ch_custom_beds = Channel.from(inputs.custom_strata)
-
-  // add it to the strata channel, since treatment is the same
-  ch_strata_beds = ch_strata_beds.concat(ch_custom_beds) 
-  //ch_custom_beds.view()
+    // add it to the strata channel, since treatment is the same
+    ch_strata_beds = ch_strata_beds.concat(ch_custom_beds) 
+  }
   
   //
   // CODE: Prepare input files channel

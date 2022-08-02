@@ -21,6 +21,9 @@
             "happy/prepy": {
                 "git_sha": "233fa70811a03a4cecb2ece483b5c8396e2cee1d"
             },
+            "jupyternotebook": {
+                "git_sha": "e20e57f90b6787ac9a010a980cf6ea98bd990046"
+            },
             "mosdepth": {
                 "git_sha": "72a31b76eb1b58879e0d91fb1d992e0118693098"
             },
