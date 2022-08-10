@@ -16,22 +16,20 @@ workflow FINAL_REPORT {
   main:
   
   //
-  // CODE: Prepare preppy input channel
+  // CODE: Prepare jupyternotebook input channel
   //
   ch_results = happy_results.combine(mosdepth_results, by: 0)
   ch_results = ch_results.map{meta, happy_csvs, happy_json, mosdepth_txt -> tuple(happy_csvs, mosdepth_txt).flatten()}
   ch_results = ch_results.collect()
-  
+
   //
   // MODULE: jupyternotebook
   //
-  
   JUPYTERNOTEBOOK (
-    Channel.value([[id: 'test'], file("assets/220711_testjupyter.ipynb")]),
-    [:],
-    Channel.value(file("assets/220711_testdata.txt"))
+    Channel.value([[id: 'Summary of results'], file("assets/220711_testjupyter.ipynb")]),
+    ch_results.map{ it -> ["data_path": it.name] },
+    ch_results
   )
-  //ch_results.view()
   
   //versions = INPUT_PREP.out.versions // channel: [ versions.yml ]
 }
